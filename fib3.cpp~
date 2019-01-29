@@ -48,7 +48,7 @@ public:
     y(0),
     result(res),
     check(0,0,this,SHORTWAIT),
-    adder(4,4,this,LONGWAIT),
+    adder(2,2,this,LONGWAIT),
     toSignal(toSig) 
     {  
         add(&check); 

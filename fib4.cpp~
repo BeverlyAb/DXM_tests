@@ -102,7 +102,6 @@ cd1::fire(void)
     }
     else
     {
-
 		/*if(rand() % 2 == 0) {
 			//(ThreadeProcedure *, res, 
 			invoke<fib>(myFib,-100,&myFib->x,&myFib->adder);
@@ -122,19 +121,29 @@ void
 cd2::fire(void)
 { 
     fib * myFib = static_cast<fib*>(myTP_);    
-    std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
+   // std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
 	
-	//check for matching pairs
+	//add matching pairs
 	myFib->redundant[myFib->index++] = myFib->x;
 	myFib->redundant[myFib->index++] = myFib->y;
 	
-	if(myFib->index == 4){
-		if(matchingPairs(myFib->redundant)){
-			(*myFib->result) = myFib->x + myFib->y;
-			myFib->toSignal->decDep();
-			myFib->index = 0;
+	myFib->toSignal->decDep();
+	printf("depend %i\n", myFib->toSignal->getGlobalID());	
+	(*myFib->result) = myFib->x + myFib->y;	
+	if(myFib->index == 3){
+		printf("start\n");
+		if(myFib->matchingPairs(myFib->redundant)){
+			
+			printf("true\n");
+		} else{
+			//myFib->toSignal->resetCodelet();
+			printf("restart\n");
 		}
+		myFib->index = 0;
 	}
+
+
+
 }
 
 int
@@ -159,8 +168,8 @@ main(int argc, char *argv[])
     start = getTime();
     rt.run(launch<fib>(i,&result, &Runtime::finalSignal));
     end = getTime();
-   // std::cout << std::setw (6) << result;
-   // std::cout << " Total Time Taken: " << std::setw (12) << (end-start)/1000000 << " ms" << std::endl;
+    std::cout << std::setw (6) << result;
+    std::cout << " Total Time Taken: " << std::setw (12) << (end-start)/1000000 << " ms" << std::endl;
   }
   return 0;
 }

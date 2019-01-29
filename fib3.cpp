@@ -76,16 +76,8 @@ cd1::fire(void)
     }
     else
     {
-
-		if(rand() % 2 == 0) {
-			//(ThreadeProcedure *, res, 
-			invoke<fib>(myFib,-100,&myFib->x,&myFib->adder);
-			invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
-		}
-		else {        
-			invoke<fib>(myFib,myFib->num - 1,&myFib->x,&myFib->adder);
-		    invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
-		}
+       	invoke<fib>(myFib,myFib->num - 1,&myFib->x,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
     }
 }
  
