@@ -6,6 +6,3 @@ target_link_libraries(fib2 darts)
 
 add_executable(fib3 fib3.cpp)
 target_link_libraries(fib3 darts)
-
-add_executable(fib4 fib4.cpp)
-target_link_libraries(fib4 darts)

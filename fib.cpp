@@ -142,6 +142,7 @@ main(int argc, char *argv[])
 
     fibnum = atoi(argv[1]);
 
+	// mcPerTP, numBase, AffinMode choice, tpSched, mcSched)
     ThreadAffinity affin(3U, 1U, COMPACT, 0, 0);
     if (affin.generateMask())
     {
