@@ -59,6 +59,7 @@ public:
     }
     
 	bool matchingPairs(int arr[4]);
+	void clearRedundant();
     //~fib(void)
     //{
     //    std::cout << "dieing "<< num << std::endl;
@@ -88,6 +89,12 @@ bool fib::matchingPairs(int arr[4])
 
 }
 
+void fib::clearRedundant()
+{
+	for(int i =0; i < 4; i++)
+		redundant[i] = -1;
+}
+
 void
 cd1::fire(void)
 {
@@ -102,18 +109,22 @@ cd1::fire(void)
     }
     else
     {
-		/*if(rand() % 2 == 0) {
-			//(ThreadeProcedure *, res, 
-			invoke<fib>(myFib,-100,&myFib->x,&myFib->adder);
-			invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
+		//always false
+		if(rand() % 3 == 0) {
+			invoke<fib>(myFib,-100,&myFib->x1,&myFib->adder);
+			invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
+
+			//redundant threads
+			invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
+		    invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
 		}
-		else { */        
+		else {        
 			invoke<fib>(myFib,myFib->num - 1,&myFib->x1,&myFib->adder);
 		    invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 			//redundant threads
 			invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
 		    invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
-		//}
+		}
     }
 }
  
@@ -122,26 +133,23 @@ cd2::fire(void)
 { 
     fib * myFib = static_cast<fib*>(myTP_);    
    // std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
-	
+
 	//add matching pairs
 	myFib->redundant[myFib->index++] = myFib->x1;
 	myFib->redundant[myFib->index++] = myFib->y1;
 	myFib->redundant[myFib->index++] = myFib->x2;
 	myFib->redundant[myFib->index++] = myFib->y2;
+
 	
-
-
 	if(myFib->matchingPairs(myFib->redundant)){
-			(*myFib->result) = myFib->x1 + myFib->y1;	
-			//printf("true\n");
-		} else{
-			//myFib->toSignal->resetCodelet();
-			printf("restart\n");
-		}
-		myFib->index = 0;
-		myFib->toSignal->decDep();
-
-
+		(*myFib->result) = myFib->x1 + myFib->y1;
+	} else{
+		//printf("RST ");
+		(*myFib->result) = -1;
+		myFib->clearRedundant();
+	}
+	myFib->index = 0;
+	myFib->toSignal->decDep();
 }
 
 int
@@ -167,7 +175,7 @@ main(int argc, char *argv[])
     rt.run(launch<fib>(i,&result, &Runtime::finalSignal));
     end = getTime();
     std::cout << std::setw (6) << result;
-   // std::cout << " Total Time Taken: " << std::setw (12) << (end-start)/1000000 << " ms" << std::endl;
+    std::cout << " Total Time Taken: " << std::setw (12) << (end-start)/1000000 << " ms" << std::endl;
   }
   return 0;
 }
