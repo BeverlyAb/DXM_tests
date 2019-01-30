@@ -143,13 +143,16 @@ cd2::fire(void)
 	
 	if(myFib->matchingPairs(myFib->redundant)){
 		(*myFib->result) = myFib->x1 + myFib->y1;
+		myFib->toSignal->decDep();
 	} else{
 		//printf("RST ");
-		(*myFib->result) = -1;
+		//parent, input to TP, results, toSignal		
+		invoke<fib>(myFib,*myFib->result,&myFib->num,&myFib->check);
 		myFib->clearRedundant();
+		
 	}
-	myFib->index = 0;
-	myFib->toSignal->decDep();
+	//myFib->index = 0;
+	
 }
 
 int

@@ -110,7 +110,7 @@ cd1::fire(void)
     else
     {
 		//always false
-		if(rand() % 3 == -1) {
+		if(rand() % 3 == 0) {
 			invoke<fib>(myFib,-100,&myFib->x1,&myFib->adder);
 			invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 
@@ -143,13 +143,16 @@ cd2::fire(void)
 	
 	if(myFib->matchingPairs(myFib->redundant)){
 		(*myFib->result) = myFib->x1 + myFib->y1;
+		myFib->toSignal->decDep();
 	} else{
 		//printf("RST ");
-		(*myFib->result) = -1;
-		myFib->clearRedundant();
+		//parent, input to TP, results, toSignal		
+		invoke<fib>(myFib,*myFib->result,&myFib->num,&myFib->check);
+		//myFib->clearRedundant();
+		
 	}
 	myFib->index = 0;
-	myFib->toSignal->decDep();
+	
 }
 
 int
