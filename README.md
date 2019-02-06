@@ -17,7 +17,7 @@ __Three alternative solutions can be taken when a fault is detected (check box i
 - [ ] Re-run redundant tasks until all values match (**Exclude** HW which had fault)<br/>
 
 __Metric Testing (compare to Fib w/o error correction and compare to OpenMP?)__
-- [ ] Measure Execution Time (EX)
+- [ ] Measure Execution Time (ET)
 - [ ] Measure HW Temp
 - [ ] Create script to collect and graph data
 
