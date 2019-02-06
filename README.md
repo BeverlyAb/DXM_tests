@@ -22,5 +22,7 @@ __Metric Testing (compare to Fib w/o error correction and compare to OpenMP?)__
 - [ ] Create script to collect and graph data
 
 ## Accomplished
+__Add redundancy to Fib__
 - [X] Enabled redundant tasks<br/>
 - [X] Checked if all values match 
+- [X] Invoke errors to occur with given probability
