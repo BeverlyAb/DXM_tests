@@ -5,7 +5,7 @@
 #include "getClock.h"
 #include "darts.h"
 #include <map>
-#define SYNC_DEP 2
+#define SYNC_DEP 4
 using namespace darts;
 
 int idCounter = 0;
@@ -96,14 +96,14 @@ void fib::clearRedundant()
 
 void
 cd1::fire(void)
-{
+{	//recursively calls and creates more fib w/ CU and SU (check)
     fib * myFib = static_cast<fib*>(myTP_);
     myFib->toSignal->setID(idCounter++);
-	printf("Computer ID %i\n", myFib->toSignal->getGlobalID());
+	printf("Compute ID %i\n", myFib->toSignal->getGlobalID());
     //std::cout << "check " << myFib->num << std::endl;
     
     if(myFib->num<2)
-    {
+    {	//doesn't call to adder no SU needed
         (*myFib->result) = myFib->num;
         myFib->toSignal->decDep();
     }
@@ -112,7 +112,6 @@ cd1::fire(void)
 		if(rand() % 3 == -1) {
 			invoke<fib>(myFib,-100,&myFib->x1,&myFib->adder);
 			invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
-
 			//redundant threads
 			invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
 		    invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
@@ -122,15 +121,15 @@ cd1::fire(void)
 			invoke<fib>(myFib,myFib->num - 1,&myFib->x1,&myFib->adder);
 		    invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 			//redundant threads
-			//invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
-		    //invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
+			invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
+		   	invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
 		}
     }
 }
  
 void 
 cd2::fire(void)
-{ 
+{ 	//simply adds and sends value as SU (adder)
     fib * myFib = static_cast<fib*>(myTP_); 
 	 myFib->toSignal->setID(idCounter++);   
    // std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
@@ -146,7 +145,8 @@ cd2::fire(void)
 		(*myFib->result) = myFib->x1 + myFib->y1;
 		
 	} else{
-		//add code to put back into queue 
+		//create and call 2 more Fib
+		//invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->check);
 		myFib->clearRedundant();
 	}
 	myFib->toSignal->decDep();

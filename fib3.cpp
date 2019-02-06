@@ -7,6 +7,7 @@
 
 using namespace darts;
 
+int idCounter = 0;
 class cd1 : public Codelet
 {
 public:
@@ -66,7 +67,8 @@ void
 cd1::fire(void)
 {
     fib * myFib = static_cast<fib*>(myTP_);
-    
+    myFib->toSignal->setID(idCounter++);
+	printf("Compute ID %i\n", myFib->toSignal->getGlobalID());
     //std::cout << "check " << myFib->num << std::endl;
     
     if(myFib->num<2)
@@ -86,7 +88,8 @@ cd2::fire(void)
 { 
     fib * myFib = static_cast<fib*>(myTP_);    
     //std::cout << "add " << myFib->num << std::endl;
-	
+	myFib->toSignal->setID(idCounter++);
+	printf("Sync ID %i\n", myFib->toSignal->getGlobalID());
 	
     (*myFib->result) = myFib->x + myFib->y;
     myFib->toSignal->decDep();
