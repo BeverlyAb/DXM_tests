@@ -3,7 +3,7 @@ Fault tolerant tests for Dataflow execution models. Uses Codelets Model
 
 ## Procedure
 This specifically tests on the Fibonacci sequences. Redundant *fib* objects
-which contain Codelets are introduced to see if all values match.<br/>
+which contain Codelets are introduced to see if all values match.
 Otherwise, this indicates that a fault occurred.<br/>
 
 ## To Do
