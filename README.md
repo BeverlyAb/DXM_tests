@@ -7,7 +7,6 @@ which contain Codelets are introduced to see if all values match.
 Otherwise, this indicates that a fault occurred.<br/>
 
 ## Project Goals 
-*(check box indicate what is completed)*<br/>
 __Add redundancy to Fib__
 - [X] Enabled redundant tasks
 - [X] Checked if all values match 
