@@ -7,9 +7,9 @@ which contain Codelets are introduced to see if all values match.
 Otherwise, this indicates that a fault occurred.<br/>
 
 ## To Do
-Order the Synchronizing Unit (SU) to re-run the Computational Units (CU) Tasks. Two means to do this<br/>
-- [ ] Create new CU<br/>
-- [ ] Re-run same CU (modify their dependency count)
+Order the Synchronizing Unit (SU) to re-run the Computational Units (CU) Tasks. Two means to do this:<br/>
+- [ ] Create new CU (how will HW layout be affected, if at all?)<br/>
+- [ ] Re-run same CU (requires modifying their dependency count)
 
 Three alternative solutions can be taken when a fault is detected (check box indicate what is completed):<br/>
 - [ ] Pass the value through consensus; don't re-run redundant tasks<br/>
