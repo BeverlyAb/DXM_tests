@@ -5,9 +5,10 @@
 #include "getClock.h"
 #include "darts.h"
 #include <map>
-
+#define SYNC_DEP 2
 using namespace darts;
 
+int idCounter = 0;
 class cd1 : public Codelet
 {
 public:
@@ -40,8 +41,10 @@ public:
     cd2 adder;
     //This is who to signal when complete
     Codelet * toSignal;
+	
+	//BA 
 	int redundant [4];   
-	int index = 0; 
+	int index = 0; 	
 
     //Constructor
     fib(int n, int * res, Codelet * toSig):
@@ -51,7 +54,7 @@ public:
     y1(0), y2(0),
     result(res),
     check(0,0,this,SHORTWAIT),
-    adder(4,4,this,LONGWAIT),
+    adder(SYNC_DEP,SYNC_DEP,this,LONGWAIT),
     toSignal(toSig) 
     {  
         add(&check); 
@@ -60,10 +63,6 @@ public:
     
 	bool matchingPairs(int arr[4]);
 	void clearRedundant();
-    //~fib(void)
-    //{
-    //    std::cout << "dieing "<< num << std::endl;
-    //}
     
 };
 
@@ -99,7 +98,8 @@ void
 cd1::fire(void)
 {
     fib * myFib = static_cast<fib*>(myTP_);
-    
+    myFib->toSignal->setID(idCounter++);
+	printf("Computer ID %i\n", myFib->toSignal->getGlobalID());
     //std::cout << "check " << myFib->num << std::endl;
     
     if(myFib->num<2)
@@ -109,8 +109,7 @@ cd1::fire(void)
     }
     else
     {
-		//always false
-		if(rand() % 3 == 0) {
+		if(rand() % 3 == -1) {
 			invoke<fib>(myFib,-100,&myFib->x1,&myFib->adder);
 			invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 
@@ -122,8 +121,8 @@ cd1::fire(void)
 			invoke<fib>(myFib,myFib->num - 1,&myFib->x1,&myFib->adder);
 		    invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 			//redundant threads
-			invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
-		    invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
+			//invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
+		    //invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
 		}
     }
 }
@@ -131,7 +130,8 @@ cd1::fire(void)
 void 
 cd2::fire(void)
 { 
-    fib * myFib = static_cast<fib*>(myTP_);    
+    fib * myFib = static_cast<fib*>(myTP_); 
+	 myFib->toSignal->setID(idCounter++);   
    // std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
 
 	//add matching pairs
@@ -140,18 +140,16 @@ cd2::fire(void)
 	myFib->redundant[myFib->index++] = myFib->x2;
 	myFib->redundant[myFib->index++] = myFib->y2;
 
-	
+	printf("Sync ID %i\n", myFib->toSignal->getGlobalID());
 	if(myFib->matchingPairs(myFib->redundant)){
 		(*myFib->result) = myFib->x1 + myFib->y1;
-		myFib->toSignal->decDep();
-	} else{
-		//printf("RST ");
-		//parent, input to TP, results, toSignal		
-		invoke<fib>(myFib,*myFib->result,&myFib->num,&myFib->check);
-		myFib->clearRedundant();
 		
+	} else{
+		//add code to put back into queue 
+		myFib->clearRedundant();
 	}
-	//myFib->index = 0;
+	myFib->toSignal->decDep();
+	myFib->index = 0;
 	
 }
 

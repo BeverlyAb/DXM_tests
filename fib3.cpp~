@@ -37,11 +37,12 @@ public:
     int * result;
     cd1 check;
     cd2 adder;
+	int id;
     //This is who to signal when complete
     Codelet * toSignal;
     
     //Constructor
-    fib(int n, int * res, Codelet * toSig):
+    fib(int n, int * res, Codelet * toSig, int startID):
     ThreadedProcedure(),
     num(n),
     x(0),
@@ -49,17 +50,14 @@ public:
     result(res),
     check(0,0,this,SHORTWAIT),
     adder(2,2,this,LONGWAIT),
+	id(startID),
     toSignal(toSig) 
     {  
         add(&check); 
         add(&adder);
     }
     
-    //~fib(void)
-    //{
-    //    std::cout << "dieing "<< num << std::endl;
-    //}
-    
+    //~fib(){}
 };
 
 void
@@ -76,16 +74,8 @@ cd1::fire(void)
     }
     else
     {
-
-		if(rand() % 2 == 0) {
-			//(ThreadeProcedure *, res, 
-			invoke<fib>(myFib,-100,&myFib->x,&myFib->adder);
-			invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
-		}
-		else {        
-			invoke<fib>(myFib,myFib->num - 1,&myFib->x,&myFib->adder);
-		    invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
-		}
+       	invoke<fib>(myFib,myFib->num - 1,&myFib->x,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y,&myFib->adder);
     }
 }
  
