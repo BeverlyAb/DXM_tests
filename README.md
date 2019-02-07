@@ -12,7 +12,7 @@ __Add redundancy to Fib__
 - [X] Checked if all values match 
 - [X] Invoke errors to occur with given probability
 
-__Order the Synchronizing Unit (SU) to re-run the Computational Units (CU) Tasks. Two means to do this:__
+__Order the Synchronizing Unit (SU) to re-run the Computational Units (CU) Tasks. Two ways to do this:__
 - [ ] Create new CU (how will HW layout be affected, if at all?)
 - [ ] Re-run same CU (requires modifying their dependency count)
 
