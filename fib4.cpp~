@@ -99,17 +99,21 @@ cd1::fire(void)
 {	//recursively calls and creates more fib w/ CU and SU (check)
     fib * myFib = static_cast<fib*>(myTP_);
     myFib->toSignal->setID(idCounter++);
-	printf("Compute ID %i\n", myFib->toSignal->getGlobalID());
+	//printf("Compute ID %i\n", myFib->toSignal->getGlobalID());
     //std::cout << "check " << myFib->num << std::endl;
     
     if(myFib->num<2)
-    {
+    {	//doesn't call to adder no SU needed
         (*myFib->result) = myFib->num;
         myFib->toSignal->decDep();
     }
     else
     {
-		if(rand() % 3 == -1) {
+		if(rand() % 3 == 0) {
+//doTP.h
+//invoke<>ThreadedProcedure* parentTP, arg1 A1, arg2 A2, uint8_t* newTPptr = nullptr
+//create a fib(int n, int * result, Codelet * toSig), whose parent is myFib
+//signals myFib's SU
 			invoke<fib>(myFib,-100,&myFib->x1,&myFib->adder);
 			invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
 			//redundant threads
@@ -132,7 +136,7 @@ cd2::fire(void)
 { 	//simply adds and sends value as SU (adder)
     fib * myFib = static_cast<fib*>(myTP_); 
 	 myFib->toSignal->setID(idCounter++);   
-   // std::cout << "add " << myFib->num << std::endl;//<< " x: " << myFib->x <<" y: " << myFib->y << std::endl;
+ 
 
 	//add matching pairs
 	myFib->redundant[myFib->index++] = myFib->x1;
@@ -140,16 +144,37 @@ cd2::fire(void)
 	myFib->redundant[myFib->index++] = myFib->x2;
 	myFib->redundant[myFib->index++] = myFib->y2;
 
-	printf("Sync ID %i\n", myFib->toSignal->getGlobalID());
-	if(myFib->matchingPairs(myFib->redundant)){
+   //std::cout  << " x: " << myFib->x1 <<" x2: " << myFib->x2 << std::endl;
+
+	printf(	"Sync ID %i\n Fib(%i): %i, %i\n Fib(%i): %i, %i\n",
+			myFib->toSignal->getGlobalID(), 
+			myFib->num -1, myFib->x1, myFib->x2, 
+			myFib->num - 2, myFib->y1, myFib->y2); 
+	if(/*myFib->matchingPairs(myFib->redundant)*/
+		myFib->x1 == myFib->x2 && myFib->y1 == myFib->y2){
 		(*myFib->result) = myFib->x1 + myFib->y1;
+		myFib->toSignal->decDep();
+		printf("Got it at %i\n", myFib->toSignal->getGlobalID());
+		//printf("# of Dependencies %i\n", myFib->toSignal->getCounter());
 		
 	} else{
-		//create and call 2 more Fib
-		//invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->check);
+		printf("Created more\n");
+		//create and call 4 new Fib
+		invoke<fib>(myFib,myFib->num - 1,&myFib->x1,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
+		//redundant threads
+		invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
+
+		//create and call 4 new Fib
+		invoke<fib>(myFib,myFib->num - 1,&myFib->x1,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y1,&myFib->adder);
+		//redundant threads
+		invoke<fib>(myFib,myFib->num - 1,&myFib->x2,&myFib->adder);
+		invoke<fib>(myFib,myFib->num - 2,&myFib->y2,&myFib->adder);
 		myFib->clearRedundant();
+		//myFib->toSignal->decDep();
 	}
-	myFib->toSignal->decDep();
 	myFib->index = 0;
 	
 }
